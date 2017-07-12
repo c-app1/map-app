@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map_canvas { height: 100% }
+    </style>
+    
+    <script type="text/javascript" src="create_Address.js"></script>
+    
+    <!-- Google Maps APIを読み込む -->
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXLWFOohHpx7da6uO-PaGlA8XuzaPEan0&sensor=true">
+    </script>
+  </head>
+
+  <!-- ページが読み込まれたらinitialize()関数を実行 -->
+  <body onload="initialize()">
+    <form>
+      <input type="text" value="" id="address">
+    </form>
+    
+    <!-- 地図を表示させる要素。widthとheightを必ず指定する。 -->
+    <div id="map_canvas" style="width:50%; height:50%"></div>
+    <div id="area_name"></div>
+  </body>
+
+
+</html>
