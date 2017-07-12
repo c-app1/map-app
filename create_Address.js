@@ -1,36 +1,36 @@
-<!-- initialize()ŠÖ”‚ğ’è‹` -->
+<!-- initialize()é–¢æ•°ã‚’å®šç¾© -->
 function initialize() {
   if (navigator.geolocation) {
   
-  // ˆÊ’uî•ñæ“¾‚ÌƒIƒvƒVƒ‡ƒ“B‚¸“x‚É‚·‚é
+  // ä½ç½®æƒ…å ±å–å¾—ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã€‚é«˜ç²¾åº¦ã«ã™ã‚‹
   var position_options = {
     enableHightAccuracy: true
   };
   
-  // Œ»İ‚ÌˆÊ’uî•ñæ“¾‚ğÀ{ ³í‚ÉˆÊ’uî•ñ‚ªæ“¾‚Å‚«‚é‚ÆA
-  // successCallback‚ªƒR[ƒ‹ƒoƒbƒN‚³‚ê‚éB
+  // ç¾åœ¨ã®ä½ç½®æƒ…å ±å–å¾—ã‚’å®Ÿæ–½ æ­£å¸¸ã«ä½ç½®æƒ…å ±ãŒå–å¾—ã§ãã‚‹ã¨ã€
+  // successCallbackãŒã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã•ã‚Œã‚‹ã€‚
   navigator.geolocation.getCurrentPosition(successCallback,errorCallback);
   } else {
-    alert("‚²‚ß‚ñ‚È‚³‚¢B–{ƒuƒ‰ƒEƒU‚Å‚ÍGeolocation‚ªg‚¦‚Ü‚¹‚ñ")
+    alert("ã”ã‚ã‚“ãªã•ã„ã€‚æœ¬ãƒ–ãƒ©ã‚¦ã‚¶ã§ã¯GeolocationãŒä½¿ãˆã¾ã›ã‚“")
   }
   
 }
 
-// ( 2 )ˆÊ’uî•ñ‚ª³í‚Éæ“¾‚³‚ê‚½‚ç
+// ( 2 )ä½ç½®æƒ…å ±ãŒæ­£å¸¸ã«å–å¾—ã•ã‚ŒãŸã‚‰
 function successCallback(pos) {
   var Potition_latitude = pos.coords.latitude;
   var Potition_longitude = pos.coords.longitude;
   
-  // ˆÊ’uî•ñ‚ªæ“¾o—ˆ‚½‚çGoogle Map‚ğ•\¦‚·‚é
+  // ä½ç½®æƒ…å ±ãŒå–å¾—å‡ºæ¥ãŸã‚‰Google Mapã‚’è¡¨ç¤ºã™ã‚‹
   start(Potition_latitude,Potition_longitude);
 }
  
 function errorCallback(error) {
-  alert("ˆÊ’uî•ñ‚ª‹–‰Â‚³‚ê‚Ä‚¢‚Ü‚¹‚ñBˆÊ’uî•ñ‚ğƒIƒ“‚É‚µ‚Ä‚­‚¾‚³‚¢B");
+  alert("ä½ç½®æƒ…å ±ãŒè¨±å¯ã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚ä½ç½®æƒ…å ±ã‚’ã‚ªãƒ³ã«ã—ã¦ãã ã•ã„ã€‚");
 }
 
 function start(x,y){
-  // ’n}‚ğ•\¦‚·‚éÛ‚ÌƒIƒvƒVƒ‡ƒ“‚ğİ’è
+  // åœ°å›³ã‚’è¡¨ç¤ºã™ã‚‹éš›ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’è¨­å®š
   
   var myLatlng = new google.maps.LatLng(x,y);
   
@@ -41,25 +41,25 @@ function start(x,y){
       //position: google.maps.ControlPosition.TOP_CENTER
   };
 
-  // MapƒIƒuƒWƒFƒNƒg‚É’n}•\¦—v‘fî•ñ‚ÆƒIƒvƒVƒ‡ƒ“î•ñ‚ğ“n‚µAƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+  // Mapã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«åœ°å›³è¡¨ç¤ºè¦ç´ æƒ…å ±ã¨ã‚ªãƒ—ã‚·ãƒ§ãƒ³æƒ…å ±ã‚’æ¸¡ã—ã€ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
   var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
   
   var marker = new google.maps.Marker({
   position: myLatlng,
   map: map,
-  title:"Œ»İ’n"
+  title:"ç¾åœ¨åœ°"
   });
   get_area_name(myLatlng);
 }
 
 function get_area_name(latLng_now){
-  // À•W‚©‚çZŠ–¼‚ğæ“¾
+  // åº§æ¨™ã‹ã‚‰ä½æ‰€åã‚’å–å¾—
   var geocoder = new google.maps.Geocoder();
   geocoder.geocode({latLng: latLng_now}, function(results, status){
     if(status == google.maps.GeocoderStatus.OK){
-    document.getElementById("area_name").innerHTML = results[0].formatted_address+'•t‹ß‚É‚¢‚Ü‚·';
+    document.getElementById("area_name").innerHTML = results[0].formatted_address+'ä»˜è¿‘ã«ã„ã¾ã™';
     } else {
-    alert("ƒGƒ‰[")
+    alert("ã‚¨ãƒ©ãƒ¼")
     }
   });
 }
