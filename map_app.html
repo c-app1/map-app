@@ -12,21 +12,41 @@
     
     <script type="text/javascript" src="create_Address.js"></script>
     
-    <!-- Google Maps API‚ğ“Ç‚İ‚Ş -->
+    <!-- Google Maps APIã‚’èª­ã¿è¾¼ã‚€ -->
     <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXLWFOohHpx7da6uO-PaGlA8XuzaPEan0&sensor=true">
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXLWFOohHpx7da6uO-PaGlA8XuzaPEan0&sensor=true&libraries=places">
     </script>
   </head>
 
-  <!-- ƒy[ƒW‚ª“Ç‚İ‚Ü‚ê‚½‚çinitialize()ŠÖ”‚ğÀs -->
+  <!-- ãƒšãƒ¼ã‚¸ãŒèª­ã¿è¾¼ã¾ã‚ŒãŸã‚‰initialize()é–¢æ•°ã‚’å®Ÿè¡Œ -->
   <body onload="initialize()">
-    <form>
-      <input type="text" value="" id="address">
-    </form>
+
+    <!-- åœ°å›³ã‚’è¡¨ç¤ºã•ã›ã‚‹è¦ç´ ã€‚widthã¨heightã‚’å¿…ãšæŒ‡å®šã™ã‚‹ã€‚ -->
+    <div id="map_canvas" style="width:60%; height:60%; float:left;"></div>
+    <div id="space" style="width:10%; height:60%; float:left;"></div>
+    <div id="map_search1" style="width:30%; height:60%; float:left;">
+      <form>
+        <br>
+        è©³ç´°æ¤œç´¢<br>
+        <br>
+        ç›®çš„åœ°:ã€€<input type="text" value="" id="end_address">ã€€ã¸<br><br>
+        çµŒç”±åœ°:ã€€<input type="text" value="" id="via_address">ã€€ã€€<br>
+        <label id="text1">(çµŒç”±åœ°ã®æŒ‡å®šãŒãªã„å ´åˆã¯ç©ºç™½ã«ã—ã¦ãã ã•ã„)</label>
+        <br>
+        <button id="decide_button" onclick="set_Address()" style="font-family=Arial;"> æ±ºå®š</button>
+        
+      </form>
+    </div>
+    <div id="area_name" style="width:100%; height:10%; clear: both;"></div>
+    <div id="map_search2" style="width:100%; height:30%"></div>
     
-    <!-- ’n}‚ğ•\¦‚³‚¹‚é—v‘fBwidth‚Æheight‚ğ•K‚¸w’è‚·‚éB -->
-    <div id="map_canvas" style="width:50%; height:50%"></div>
-    <div id="area_name"></div>
+    <script>
+      function set_Address(){
+        add1 = document.getElementById("end_address").value;
+        add2 = document.getElementById("via_address").value;
+        getPlace(add1);
+      }
+    </script>
   </body>
 
 

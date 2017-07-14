@@ -1,3 +1,10 @@
+
+//現在値情報
+var myLatlng;
+
+//描画するマップ
+var map1;
+
 <!-- initialize()関数を定義 -->
 function initialize() {
   if (navigator.geolocation) {
@@ -32,7 +39,7 @@ function errorCallback(error) {
 function start(x,y){
   // 地図を表示する際のオプションを設定
   
-  var myLatlng = new google.maps.LatLng(x,y);
+  myLatlng = new google.maps.LatLng(x,y);
   
   var mapOptions = {
       center: myLatlng,
@@ -42,11 +49,11 @@ function start(x,y){
   };
 
   // Mapオブジェクトに地図表示要素情報とオプション情報を渡し、インスタンス生成
-  var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+  map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
   
   var marker = new google.maps.Marker({
   position: myLatlng,
-  map: map,
+  map: map1,
   title:"現在地"
   });
   get_area_name(myLatlng);
@@ -63,3 +70,50 @@ function get_area_name(latLng_now){
     }
   });
 }
+
+function getPlace(address){
+        //alert("aaa")
+        var service = new google.maps.places.PlacesService(map1);
+        //alert(address)
+        var placeRequest = {
+            query: address, //入力したテキスト
+        }
+        //リクエストを送ってあげるとプレイス情報を格納したオブジェクトを返してくる。
+        service.textSearch(placeRequest,function(results,status){
+            console.log("1"+status)
+            var places = results[0];
+            toGeocode(places);
+        });
+}
+
+function toGeocode(places){
+    //取得したplacesオブジェクトから緯度と経度をgeocodeとして渡します。
+    var latlng = new google.maps.LatLng(places.geometry.location.lat(),places.geometry.location.lng());
+    //ルート取得
+    getRoute(latlng);
+}
+
+function getRoute(latlng){
+    var request = {
+        origin: myLatlng, 
+        destination: latlng, //到着地点の緯度、経度
+        travelMode: google.maps.DirectionsTravelMode.WALKING //ルートの種類
+    }
+    directionsService.route(request,function(result, status){
+        onsole.log("2"+status)
+        toRender(result);
+    });
+}
+
+function toRender(result){
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setDirections(result); //取得した情報をset
+    directionsDisplay.setMap(map1); //マップに描画
+}
+
+
+
+
+
+
+
