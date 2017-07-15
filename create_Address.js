@@ -125,6 +125,17 @@ function search_route(){
     }
   };
   
+  var ds = google.maps.DirectionsStatus;//ルート結果のステータス
+  var directionsErr = new Array(); //ルート結果のエラーメッセージ 
+  directionsErr[ds.INVALID_REQUEST] = "指定された DirectionsRequest が無効です。"; 
+  directionsErr[ds.MAX_WAYPOINTS_EXCEEDED] = "DirectionsRequest に指定された DirectionsWaypoint が多すぎます。ウェイポイントの最大許容数は 8 に出発地点と到着地点を加えた数です。"; 
+  directionsErr[ds.NOT_FOUND] = "出発地点、到着地点、ウェイポイントのうち、少なくとも 1 つがジオコード化できませんでした。"; 
+  directionsErr[ds.OVER_QUERY_LIMIT] = "ウェブページは、短期間にリクエストの制限回数を超えました。"; 
+  directionsErr[ds.REQUEST_DENIED] = "ウェブページではルート サービスを使用できません。"; 
+  directionsErr[ds.UNKNOWN_ERROR] = "サーバー エラーのため、ルート リクエストを処理できませんでした。もう一度試すと正常に処理される可能性があります。"; 
+  directionsErr[ds.ZERO_RESULTS] = "出発地点と到着地点間でルートを見つけられませんでした。"; 
+  
+  
   /*myLatlng = new google.maps.LatLng(35.681382,139.766084);
   
   var mapOptions = {
@@ -165,7 +176,7 @@ function search_route(){
       // 検索結果の中心設定 
       map1.setCenter(response.routes[0].bounds.getCenter()); 
     }else{
-      alert("ルート検索が失敗しました。");
+      alert("ルート検索が失敗しました。" + directionsErr[status]);
     }
   });
 }
