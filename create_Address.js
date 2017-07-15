@@ -5,8 +5,20 @@ var myLatlng;
 //描画するマップ
 var map1;
 
+var directions;
+
+/*var directionsErr = new Array(); //ルート結果のエラーメッセージ 
+directionsErr[ds.INVALID_REQUEST] = "指定された DirectionsRequest が無効です。"; 
+directionsErr[ds.MAX_WAYPOINTS_EXCEEDED] = "DirectionsRequest に指定された DirectionsWaypoint が多すぎます。ウェイポイントの最大許容数は 8 に出発地点と到着地点を加えた数です。"; 
+directionsErr[ds.NOT_FOUND] = "出発地点、到着地点、ウェイポイントのうち、少なくとも 1 つがジオコード化できませんでした。"; 
+directionsErr[ds.OVER_QUERY_LIMIT] = "ウェブページは、短期間にリクエストの制限回数を超えました。"; 
+directionsErr[ds.REQUEST_DENIED] = "ウェブページではルート サービスを使用できません。"; 
+directionsErr[ds.UNKNOWN_ERROR] = "サーバー エラーのため、ルート リクエストを処理できませんでした。もう一度試すと正常に処理される可能性があります。"; 
+directionsErr[ds.ZERO_RESULTS] = "出発地点と到着地点間でルートを見つけられませんでした。"; 
+*/
+
 <!-- initialize()関数を定義 -->
-function initialize() {
+/*function initialize() {
   if (navigator.geolocation) {
   
   // 位置情報取得のオプション。高精度にする
@@ -64,55 +76,99 @@ function get_area_name(latLng_now){
   var geocoder = new google.maps.Geocoder();
   geocoder.geocode({latLng: latLng_now}, function(results, status){
     if(status == google.maps.GeocoderStatus.OK){
-    document.getElementById("area_name").innerHTML = results[0].formatted_address+'付近にいます';
+      document.getElementById("area_name").innerHTML = results[0].formatted_address+'付近にいます';
     } else {
-    alert("エラー")
+      alert("エラー")
+    }
+  });
+}*/
+
+
+function s() {
+  myLatlng = new google.maps.LatLng(34.68639,135.52);
+  
+  var mapOptions = {
+      center: myLatlng,
+      zoom: 12,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      //position: google.maps.ControlPosition.TOP_CENTER
+  };
+
+  // Mapオブジェクトに地図表示要素情報とオプション情報を渡し、インスタンス生成
+  map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+  
+  var marker = new google.maps.Marker({
+  position: myLatlng,
+  map: map1,
+  title:"東京"
+  });
+  
+}
+
+
+function initialize(){
+  s();
+  //search_route();
+}
+
+
+function search_route(){
+  directionsService = new google.maps.DirectionsService();
+  
+  rendererOptions = {
+    draggable: true,    //ドラッグ操作の有効/無効
+    preserveViewport: true,    //ズームの有無
+    suppressMarkers: true,    //デフォルトのマーカーを非表示
+    polylineOptions: {    //ルートの色と太さはここで変える
+        strokeColor:"#f00",    //色
+        strokeWeight:3    //太さ
+    }
+  };
+  
+  /*myLatlng = new google.maps.LatLng(35.681382,139.766084);
+  
+  var mapOptions = {
+      center: myLatlng,
+      zoom: 50,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      //position: google.maps.ControlPosition.TOP_CENTER
+  };
+
+  // Mapオブジェクトに地図表示要素情報とオプション情報を渡し、インスタンス生成
+  map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+  */
+  
+  var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions); // ルート案内
+  directionsDisplay.setMap(map1);
+  //directionsDisplay.setPanel(document.getElementById("map_search2"));
+  //google.maps.event.addListener(directionsDisplay,'directions_changed', function(){});//引っ張ってルート変更できるように設定
+  
+  var start = "梅田駅";
+  var end = "天王寺駅";
+  var request = {
+    origin:start, // 出発地
+    destination:end, // 目的地
+    waypoints:[{location:"難波駅"}], //途中経路
+    travelMode: google.maps.DirectionsTravelMode.DRIVING // 車で
+  };
+  directionsService.route(request, function(response, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      //directionsDisplay.setDirections(response); // 描画
+      // ポリライン(折れ線)を生成し、マップに表示 
+      var poly = new google.maps.Polyline({ 
+      map: map1,              //マップ 
+      path: results.routes[0].overview_path,//ポリラインの座標の列 
+      strokeWeight: 5,       //ストローク幅(ピクセル単位) 
+      strokeColor: "#f01010",//16進数形式のストロークの色 
+      strokeOpacity: 0.5     //ストロークの不透明度(0.0～1.0) 
+      }); 
+      // 検索結果の中心設定 
+      map1.setCenter(response.routes[0].bounds.getCenter()); 
+    }else{
+      alert("ルート検索が失敗しました。");
     }
   });
 }
-
-function getPlace(address){
-        //alert("aaa")
-        var service = new google.maps.places.PlacesService(map1);
-        //alert(address)
-        var placeRequest = {
-            query: address, //入力したテキスト
-        }
-        //リクエストを送ってあげるとプレイス情報を格納したオブジェクトを返してくる。
-        service.textSearch(placeRequest,function(results,status){
-            console.log("1"+status)
-            var places = results[0];
-            toGeocode(places);
-        });
-}
-
-function toGeocode(places){
-    //取得したplacesオブジェクトから緯度と経度をgeocodeとして渡します。
-    var latlng = new google.maps.LatLng(places.geometry.location.lat(),places.geometry.location.lng());
-    //ルート取得
-    getRoute(latlng);
-}
-
-function getRoute(latlng){
-    var request = {
-        origin: myLatlng, 
-        destination: latlng, //到着地点の緯度、経度
-        travelMode: google.maps.DirectionsTravelMode.WALKING //ルートの種類
-    }
-    directionsService.route(request,function(result, status){
-        onsole.log("2"+status)
-        toRender(result);
-    });
-}
-
-function toRender(result){
-    directionsDisplay = new google.maps.DirectionsRenderer();
-    directionsDisplay.setDirections(result); //取得した情報をset
-    directionsDisplay.setMap(map1); //マップに描画
-}
-
-
-
 
 
 
