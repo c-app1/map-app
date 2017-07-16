@@ -206,18 +206,22 @@ function search_route(){
     travel_mode = google.maps.DirectionsTravelMode.DRIVING;
   }
   //console.log(travel_mode);
+  var start_point = document.getElementById("start_address").value;
+  if (start_point == ""){
+    start_point = myLatlng;
+  }
   var end = document.getElementById("end_address").value;
   var waypoint1 = document.getElementById("via_address").value;
   if (waypoint1 !=""){
     var request = {
-      origin:myLatlng, // 出発地
+      origin:start_point, // 出発地
       destination:end, // 目的地
       waypoints:[{location:waypoint1}], //途中経路
       travelMode: travel_mode //移動手段
     };
   }else{
     var request = {
-      origin:myLatlng, // 出発地
+      origin:start_point, // 出発地
       destination:end, // 目的地
       travelMode: travel_mode //移動手段
     };
@@ -237,6 +241,7 @@ function search_route(){
       map1.setCenter(results.routes[0].bounds.getCenter());*/
     }else{
       alert("ルート検索が失敗しました。" + directionsErr[status]);
+      initialize_route_flag = false;
     }
   });
 }
@@ -278,7 +283,7 @@ function clear_map(){
   // 地図を表示する際のオプションを設定
   var mapOptions = {
     center: myLatlng,
-    zoom: 12,
+    zoom: map1.getZoom(),
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     //position: google.maps.ControlPosition.TOP_CENTER
   };

@@ -59,7 +59,9 @@
       <form id="f2" style="display:none;">
         <br>
         <br>
-        目的地:　<input type="text" value="" id="end_address">　へ<br><br>
+        出発地:　<input type="text" value="" id="start_address"><br>
+        (空白の場合は現在地が出発地になります)<br>
+        目的地:　<input type="text" value="" id="end_address">　へ<br>
         経由地:　<input type="text" value="" id="via_address">　　<br>
         <label id="text1">(経由地は空白でもOK!)</label><br>
         <br>
@@ -98,11 +100,13 @@
       }
       
       function reset_form(){
+        document.getElementById("start_address").value = "";
         document.getElementById("end_address").value = "";
         document.getElementById("via_address").value = "";
       }
       
       function search_route_to_goal(address){
+        document.getElementById("start_address").value = "";
         document.getElementById("end_address").value=address;
         document.getElementById("via_address").value="";
         search_route();
