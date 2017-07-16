@@ -19,7 +19,7 @@
   </head>
 
   <!-- ページが読み込まれたらinitialize()関数を実行 -->
-  <body>
+  <body onload="initialize()">
 
     <!-- 地図を表示させる要素。widthとheightを必ず指定する。 -->
     <div id="map_canvas" style="width:60%; height:60%; float:left;"></div>
@@ -33,15 +33,13 @@
         経由地:　<input type="text" value="" id="via_address">　　<br>
         <label id="text1">(経由地の指定がない場合は空白にしてください)</label>
         <br>
-        <button id="decide_button" onclick="search_route()">検索</button>
+        <input type="button" value="検索" onclick="search_route()">
       </form>
     </div>
     <div id="area_name" style="width:100%; height:10%; clear: both;"></div>
     <div id="route" style="width:100%; height:30%; overflow: scroll;"></div>
     
     <script>
-      //onload="initialize()"
-      initialize();
       
     </script>
   </body>

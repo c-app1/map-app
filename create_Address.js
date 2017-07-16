@@ -18,7 +18,7 @@ directionsErr[ds.ZERO_RESULTS] = "出発地点と到着地点間でルートを�
 */
 
 <!-- initialize()関数を定義 -->
-/*function initialize() {
+function initialize() {
   if (navigator.geolocation) {
   
   // 位置情報取得のオプション。高精度にする
@@ -28,7 +28,8 @@ directionsErr[ds.ZERO_RESULTS] = "出発地点と到着地点間でルートを�
   
   // 現在の位置情報取得を実施 正常に位置情報が取得できると、
   // successCallbackがコールバックされる。
-  navigator.geolocation.getCurrentPosition(successCallback,errorCallback);
+  //navigator.geolocation.getCurrentPosition(successCallback,errorCallback);
+  navigator.geolocation.watchPosition(successCallback,errorCallback);
   } else {
     alert("ごめんなさい。本ブラウザではGeolocationが使えません")
   }
@@ -55,7 +56,7 @@ function start(x,y){
   
   var mapOptions = {
       center: myLatlng,
-      zoom: 15,
+      zoom: 12,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       //position: google.maps.ControlPosition.TOP_CENTER
   };
@@ -81,10 +82,10 @@ function get_area_name(latLng_now){
       alert("エラー")
     }
   });
-}*/
+}
 
 
-function s() {
+/*function s() {
   myLatlng = new google.maps.LatLng(34.68639,135.52);
   
   var mapOptions = {
@@ -103,17 +104,33 @@ function s() {
   title:"東京"
   });
   
-}
+}*/
 
 
-function initialize(){
+/*function initialize(){
   s();
-  //search_route();
-}
+  search_route();
+}*/
 
 
 function search_route(){
   directionsService = new google.maps.DirectionsService();
+  
+  var mapOptions = {
+      center: myLatlng,
+      zoom: 12,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      //position: google.maps.ControlPosition.TOP_CENTER
+  };
+
+  // Mapオブジェクトに地図表示要素情報とオプション情報を渡し、インスタンス生成
+  map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+  var marker = new google.maps.Marker({
+  position: myLatlng,
+  map: map1,
+  title:"現在地"
+  });
+  get_area_name(myLatlng);
   
   rendererOptions = {
     draggable: true,    //ドラッグ操作の有効/無効
@@ -151,22 +168,32 @@ function search_route(){
   
   var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions); // ルート案内
   directionsDisplay.setMap(map1);
-  //directionsDisplay.setPanel(document.getElementById("map_search2"));
-  //google.maps.event.addListener(directionsDisplay,'directions_changed', function(){});//引っ張ってルート変更できるように設定
+  //directionsDisplay.setPanel(document.getElementById("route").innerHTML);
+  google.maps.event.addListener(directionsDisplay,'directions_changed', function(){});//引っ張ってルート変更できるように設定?
   
-  var start = "梅田駅";
-  var end = "天王寺駅";
-  var request = {
-    origin:start, // 出発地
-    destination:end, // 目的地
-    waypoints:[{location:"難波駅"}], //途中経路
-    travelMode: google.maps.DirectionsTravelMode.DRIVING // 車で
-  };
-  directionsService.route(request, function(response, status) {
-    if (status == google.maps.DirectionsStatus.OK) {
-      //directionsDisplay.setDirections(response); // 描画
+  //var start = "梅田駅";
+  //var end = "天王寺駅";
+  var end = document.getElementById("end_address").value;
+  waypoint1 = document.getElementById("via_address").value;
+  if (waypoint1 !=""){
+    var request = {
+      origin:myLatlng, // 出発地
+      destination:end, // 目的地
+      waypoints:[{location:waypoint1}], //途中経路
+      travelMode: google.maps.DirectionsTravelMode.DRIVING // 車で
+    };
+  }else{
+    var request = {
+      origin:myLatlng, // 出発地
+      destination:end, // 目的地
+      travelMode: google.maps.DirectionsTravelMode.DRIVING // 車で
+    };
+  }
+  directionsService.route(request, function(results, status) {
+    if (status == ds.OK) {
+      directionsDisplay.setDirections(results); // 描画
       // ポリライン(折れ線)を生成し、マップに表示 
-      var poly = new google.maps.Polyline({ 
+      /*var poly = new google.maps.Polyline({
       map: map1,              //マップ 
       path: results.routes[0].overview_path,//ポリラインの座標の列 
       strokeWeight: 5,       //ストローク幅(ピクセル単位) 
@@ -174,13 +201,35 @@ function search_route(){
       strokeOpacity: 0.5     //ストロークの不透明度(0.0～1.0) 
       }); 
       // 検索結果の中心設定 
-      map1.setCenter(response.routes[0].bounds.getCenter()); 
+      map1.setCenter(results.routes[0].bounds.getCenter());*/
     }else{
       alert("ルート検索が失敗しました。" + directionsErr[status]);
     }
   });
 }
 
+function create_maker(latlng){
+  var marker = new google.maps.Marker({
+  position: latlng,
+  map: map1,
+  title:address
+  });
+}
+
+function get_area_name_a(address){
+  // 座標から住所名を取得
+  var latlng;
+  var geocoder = new google.maps.Geocoder();
+  geocoder.geocode({address: address}, function(results, status){
+    if(status == google.maps.GeocoderStatus.OK){
+      latlng = results[0].geometry.location;
+    } else {
+      latlng = -1;
+      alert("エラー");
+    }
+  });
+  return latlng;
+}
 
 
 
