@@ -26,9 +26,6 @@
   <body onload="initialize(),reset_color(),set_form(1),set_move(1),init(),reset_form()">
   
     <div id="area_name" style="width:100%; height:10%;"></div>
-    <div id="mySplash" style="position:absolute;z-index:1;visibility:hidden;width:100px;height:50px;background-color:#FFFFFF;text-align:center;font-size:large;font-weight:bold;border-style:ridge">
-    <br><br>ただいまページ読み込み中。お待ちください。
-    </div>
     <!-- 地図を表示させる要素。widthとheightを必ず指定する。 -->
     <div id="map_canvas" style="width:100%; height:50%;"></div>
     <!--div id="space" style="width:2%; height:60%; float:left;"></div-->
@@ -43,6 +40,12 @@
       </form>
     </div>
     <div id="map_search1" style="width:50%; height:35%;float:left;">
+      <form id="f0" style="display:none;">
+        <CENTER>
+          ただいまルートを初期化しています。
+          しばらくお待ちください。
+        </CENTER>
+      </form>
       <form id="f1" style="overflow: scroll;">
         <br>
         <br>
@@ -66,7 +69,7 @@
         経由地:　<input type="text" value="" id="via_address">　　<br>
         <label id="text1">(経由地は空白でもOK!)</label><br>
         <br>
-        　　　<input type="button" value="検索" onclick="search_route()">
+        <input type="button" value="検索" onclick="search_route()">
         　　<input type="button" value="検索クリア" onclick="reset_form()">
       </form>
     </div>
@@ -74,21 +77,27 @@
     
     <script>
       function reset_search(){
-        wait_display();
+        set_form(3);
         init_map();
         reset_color();
         reset_form();
         document.getElementById("clear_route").disabled = true;
-        wait_close();
+        set_form(1);
       }
       
       function set_form(radio_num){
         if (radio_num==2){
           document.getElementById("f1").style.display = "none";
+          document.getElementById("f0").style.display = "none";
           document.getElementById("f2").style.display = "block";
-        } else {
+        } else if (radio_num==1){
           document.getElementById("f2").style.display = "none";
+          document.getElementById("f0").style.display = "none";
           document.getElementById("f1").style.display = "block";
+        }else if (radio_num==3){
+          document.getElementById("f2").style.display = "none";
+          document.getElementById("f1").style.display = "none";
+          document.getElementById("f0").style.display = "block";
         }
       }
       
@@ -125,20 +134,6 @@
             break;
           }
         }
-      }
-      
-      function wait_display(){
-        myY = (window.innerHeight !== undefined) ? window.innerHeight : document.body.clientHeight;
-        myX = (window.innerWidth !== undefined) ? window.innerWidth : document.body.clientWidth;
-        w_di = document.getElementById("mySplash").style;
-        w_di.top = (myY/2-70 < 0) ? 0 : myY/2-70;
-        w_di.left = (myX/2-300 <0) ? 0 : myX/2-300;
-        w_di.visibility = "visible";
-      }
-      
-      function wait_close(){
-        w_di = document.getElementById("mySplash").style;
-        w_di.visibility = "hidden";
       }
       
     </script>
