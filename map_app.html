@@ -26,6 +26,9 @@
   <body onload="initialize(),reset_color(),set_form(1),set_move(1),init(),reset_form()">
   
     <div id="area_name" style="width:100%; height:10%;"></div>
+    <div id="mySplash" style="position:absolute;z-index:1;visibility:hidden;width:100px;height:50px;background-color:#FFFFFF;text-align:center;font-size:large;font-weight:bold;border-style:ridge">
+    <br><br>ただいまページ読み込み中。お待ちください。
+    </div>
     <!-- 地図を表示させる要素。widthとheightを必ず指定する。 -->
     <div id="map_canvas" style="width:100%; height:50%;"></div>
     <!--div id="space" style="width:2%; height:60%; float:left;"></div-->
@@ -71,10 +74,12 @@
     
     <script>
       function reset_search(){
+        wait_display();
         init_map();
         reset_color();
         reset_form();
         document.getElementById("clear_route").disabled = true;
+        wait_close();
       }
       
       function set_form(radio_num){
@@ -121,6 +126,21 @@
           }
         }
       }
+      
+      function wait_display(){
+        myY = (window.innerHeight !== undefined) ? window.innerHeight : document.body.clientHeight;
+        myX = (window.innerWidth !== undefined) ? window.innerWidth : document.body.clientWidth;
+        w_di = document.getElementById("mySplash").style;
+        w_di.top = (myY/2-70 < 0) ? 0 : myY/2-70;
+        w_di.left = (myX/2-300 <0) ? 0 : myX/2-300;
+        w_di.visibility = "visible";
+      }
+      
+      function wait_close(){
+        w_di = document.getElementById("mySplash").style;
+        w_di.visibility = "hidden";
+      }
+      
     </script>
   </body>
 
