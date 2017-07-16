@@ -9,10 +9,7 @@ var map1;
 var directions;
 
 //現在地のマーカー
-var marker;
-
-//フラグ
-var initialize_map_flag = false;
+var marker = null;
 
 //フラグ
 var initialize_route_flag = false;
@@ -37,7 +34,9 @@ function initialize() {
   
   // 位置情報取得のオプション。高精度にする
   var position_options = {
-    enableHightAccuracy: true
+    enableHightAccuracy: true,
+    timeout:10000, //タイムアウトは10秒
+    maximumAge:0 //キャッシュは使用禁止
   };
   
   // 現在の位置情報取得を実施 正常に位置情報が取得できると、
@@ -47,7 +46,6 @@ function initialize() {
   } else {
     alert("ごめんなさい。本ブラウザではGeolocationが使えません")
   }
-  
 }
 
 // ( 2 )位置情報が正常に取得されたら
@@ -65,10 +63,11 @@ function errorCallback(error) {
 
 function start(x,y){
   
-  if (initialize_map_flag == false){//もし、初期化で呼び出されたならば
-    
-    myLatlng = new google.maps.LatLng(x,y);
-    
+  myLatlng = new google.maps.LatLng(x,y);
+  
+  if (marker){// マーカーがすでにあるなら消去
+    marker.setMap(null);
+  }else{ //もし、初期化で呼び出されたならば
     // 地図を表示する際のオプションを設定
     var mapOptions = {
       center: myLatlng,
@@ -79,11 +78,6 @@ function start(x,y){
   
     // Mapオブジェクトに地図表示要素情報とオプション情報を渡し、インスタンス生成
     map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-    
-    initialize_map_flag = true; // 初期化しました
-    
-  }else{
-    marker.setMap(null);
   }
   
   marker = new google.maps.Marker({
@@ -92,6 +86,7 @@ function start(x,y){
   title:"現在地"
   });
   marker.setMap(map1);
+  map1.setCenter( myLatlng );
   get_area_name(myLatlng);
 }
 
@@ -137,11 +132,12 @@ function get_area_name(latLng_now){
 
 
 function search_route(){
+  document.getElementById("clear_route").disabled = false;
   directionsService = new google.maps.DirectionsService();
   
   var mapOptions = {
       center: myLatlng,
-      zoom: 12,
+      zoom: map1.getZoom(),
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       //position: google.maps.ControlPosition.TOP_CENTER
   };
@@ -273,9 +269,9 @@ function set_move(move_num){
 }
 
 function init_map(){
-  initialize_map_flag = false;
   initialize_route_flag = false;
   document.getElementById("route").removeChild(document.getElementById("route").childNodes[0]);
+  marker=null;
   initialize();
 }
 

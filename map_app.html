@@ -36,7 +36,7 @@
         <input type="radio" id="select_s2" name="検索" value="詳細検索" onclick="set_form(2)" >詳細検索<br>
         <input type="radio" id="select_m1" name="交通" value="徒歩" onclick="set_move(1)" checked>徒歩
         <input type="radio" id="select_m2" name="交通" value="車" onclick="set_move(2)" >車　
-        <input type="button" value="ルート検索を取り消す" onclick="reset_search()"><br>
+        <input type="button" id="clear_route" value="ルート検索を取り消す" onclick="reset_search()" disabled><br>
       </form>
     </div>
     <div id="map_search1" style="width:50%; height:35%;float:left;">
@@ -74,6 +74,7 @@
         init_map();
         reset_color();
         reset_form();
+        document.getElementById("clear_route").disabled = true;
       }
       
       function set_form(radio_num){
