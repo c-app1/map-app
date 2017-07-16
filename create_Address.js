@@ -95,7 +95,7 @@ function get_area_name(latLng_now){
     if(status == google.maps.GeocoderStatus.OK){
       document.getElementById("area_name").innerHTML = results[0].formatted_address+'付近にいます';
     } else {
-      alert("エラー")
+      //alert("エラー")
     }
   });
 }
@@ -149,7 +149,7 @@ function search_route(){
   get_area_name(myLatlng);
   
   rendererOptions = {
-    draggable: true,    //ドラッグ操作の有効/無効
+    draggable: false,    //ドラッグ操作の有効/無効
     preserveViewport: true,    //ズームの有無
     suppressMarkers: true,    //デフォルトのマーカーを非表示
     polylineOptions: {    //ルートの色と太さはここで変える
@@ -184,7 +184,7 @@ function search_route(){
   
   var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions); // ルート案内
   directionsDisplay.setMap(map1);
-  //directionsDisplay.setPanel(document.getElementById("route").innerHTML);
+  directionsDisplay.setPanel(document.getElementById("route"));
   google.maps.event.addListener(directionsDisplay,'directions_changed', function(){});//引っ張ってルート変更できるように設定?
   
   //var start = "梅田駅";

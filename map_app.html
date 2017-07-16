@@ -20,11 +20,14 @@
 
   <!-- ページが読み込まれたらinitialize()関数を実行 -->
   <body onload="initialize()">
-
+  
+    <div id="area_name" style="width:50%; height:3%;"></div>
     <!-- 地図を表示させる要素。widthとheightを必ず指定する。 -->
-    <div id="map_canvas" style="width:60%; height:60%; float:left;"></div>
-    <div id="space" style="width:2%; height:60%; float:left;"></div>
-    <div id="map_search1" style="width:38%; height:60%; float:left;">
+    <div id="map_canvas" style="width:100%; height:60%;"></div>
+    <!--div id="space" style="width:2%; height:60%; float:left;"></div-->
+    <!--div id="map_search1" style="width:38%; height:60%; float:left;"-->
+    
+    <div id="map_search1" style="width:50%; height:35%;float:left;">
       <form>
         <br>
         詳細検索<br>
@@ -36,8 +39,7 @@
         <input type="button" value="検索" onclick="search_route()">
       </form>
     </div>
-    <div id="area_name" style="width:100%; height:10%; clear: both;"></div>
-    <div id="route" style="width:100%; height:30%; overflow: scroll;"></div>
+    <div id="route" style="width:50%; height:35%; overflow: scroll; float:right;"></div>
     
     <script>
       
