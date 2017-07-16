@@ -40,12 +40,6 @@
       </form>
     </div>
     <div id="map_search1" style="width:50%; height:35%;float:left;">
-      <form id="f0" style="display:none;">
-        <CENTER>
-          <label><br><br><br>ただいまルートを初期化しています。<br>
-          しばらくお待ちください。</label>
-        </CENTER>
-      </form>
       <form id="f1" style="overflow: scroll;">
         <br>
         <br>
@@ -77,27 +71,22 @@
     
     <script>
       function reset_search(){
-        set_form(3);
         init_map();
         reset_color();
         reset_form();
         document.getElementById("clear_route").disabled = true;
-        init();
       }
       
       function set_form(set_num){
         if (set_num==2){
           document.getElementById("f1").style.display = "none";
-          document.getElementById("f0").style.display = "none";
           document.getElementById("f2").style.display = "block";
         } else if (set_num==1){
           document.getElementById("f2").style.display = "none";
-          document.getElementById("f0").style.display = "none";
           document.getElementById("f1").style.display = "block";
         } else if (set_num==3){
           document.getElementById("f1").style.display = "none";
           document.getElementById("f2").style.display = "none";
-          document.getElementById("f0").style.display = "block";
         }
       }
       

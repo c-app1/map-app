@@ -271,8 +271,23 @@ function set_move(move_num){
 function init_map(){
   initialize_route_flag = false;
   document.getElementById("route").removeChild(document.getElementById("route").childNodes[0]);
-  marker=null;
-  initialize();
-  set_form(1);
+  clear_map();
+}
+
+function clear_map(){
+  // 地図を表示する際のオプションを設定
+  var mapOptions = {
+    center: myLatlng,
+    zoom: 12,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    //position: google.maps.ControlPosition.TOP_CENTER
+  };
+  
+  // Mapオブジェクトに地図表示要素情報とオプション情報を渡し、インスタンス生成
+  map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+  
+  marker.setMap(map1);
+  map1.setCenter( myLatlng );
+  get_area_name(myLatlng);
 }
 
