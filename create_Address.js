@@ -5,7 +5,14 @@ var myLatlng;
 //描画するマップ
 var map1;
 
+
 var directions;
+
+//現在地のマーカー
+var marker;
+
+//フラグ
+var initialize_map_flag = false;
 
 /*var directionsErr = new Array(); //ルート結果のエラーメッセージ 
 directionsErr[ds.INVALID_REQUEST] = "指定された DirectionsRequest が無効です。"; 
@@ -50,25 +57,34 @@ function errorCallback(error) {
 }
 
 function start(x,y){
-  // 地図を表示する際のオプションを設定
   
-  myLatlng = new google.maps.LatLng(x,y);
-  
-  var mapOptions = {
+  if (initialize_map_flag == false){//もし、初期化で呼び出されたならば
+    
+    myLatlng = new google.maps.LatLng(x,y);
+    
+    // 地図を表示する際のオプションを設定
+    var mapOptions = {
       center: myLatlng,
       zoom: 12,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       //position: google.maps.ControlPosition.TOP_CENTER
-  };
-
-  // Mapオブジェクトに地図表示要素情報とオプション情報を渡し、インスタンス生成
-  map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+    };
   
-  var marker = new google.maps.Marker({
+    // Mapオブジェクトに地図表示要素情報とオプション情報を渡し、インスタンス生成
+    map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+    
+    initialize_map_flag = true; // 初期化しました
+    
+  }else{
+    marker.setMap(null);
+  }
+  
+  marker = new google.maps.Marker({
   position: myLatlng,
-  map: map1,
+  //map: map1,
   title:"現在地"
   });
+  marker.setMap(map1);
   get_area_name(myLatlng);
 }
 
@@ -125,7 +141,7 @@ function search_route(){
 
   // Mapオブジェクトに地図表示要素情報とオプション情報を渡し、インスタンス生成
   map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-  var marker = new google.maps.Marker({
+  marker = new google.maps.Marker({
   position: myLatlng,
   map: map1,
   title:"現在地"
@@ -209,7 +225,7 @@ function search_route(){
 }
 
 function create_maker(latlng){
-  var marker = new google.maps.Marker({
+  var point_marker = new google.maps.Marker({
   position: latlng,
   map: map1,
   title:address
