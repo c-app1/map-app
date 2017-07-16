@@ -26,10 +26,14 @@
     <div id="map_canvas" style="width:100%; height:50%;"></div>
     <!--div id="space" style="width:2%; height:60%; float:left;"></div-->
     <!--div id="map_search1" style="width:38%; height:60%; float:left;"-->
-    <div id="space" style="width:50%; height:1%;"></div>
-    <div id="map_search1" style="width:50%; height:39%;float:left;">
+    <div id="space" style="width:50%; height:5%;">
       <form>
-        詳細検索<br>
+        <input type="radio" name="検索" value="選択検索" onclick="set_form(1)" checked>選択検索
+        <input type="radio" name="検索" value="詳細検索" onclick="set_form(2)" >詳細検索<br>
+      </form>
+    </div>
+    <div id="map_search1" style="width:50%; height:39%;float:left;">
+      <form id="f1" style="display:none;">
         <br>
         目的地:　<input type="text" value="" id="end_address">　へ<br><br>
         経由地:　<input type="text" value="" id="via_address">　　<br>
@@ -41,7 +45,13 @@
     <div id="route" style="width:50%; height:40%; overflow: scroll; float:right; background:#f8f8f8;"></div>
     
     <script>
-      
+      function set_form(radio_num){
+        if (radio_num==2){
+          document.getElementById("f1").style.display = "block";
+        } else {
+          document.getElementById("f1").style.display = "none";
+        }
+      }
     </script>
   </body>
 
