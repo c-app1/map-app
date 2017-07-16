@@ -273,5 +273,6 @@ function init_map(){
   document.getElementById("route").removeChild(document.getElementById("route").childNodes[0]);
   marker=null;
   initialize();
+  set_form(1);
 }
 
