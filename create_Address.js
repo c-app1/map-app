@@ -132,6 +132,7 @@ function get_area_name(latLng_now){
 
 
 function search_route(){
+  document.getElementById("clear_route").disabled = false;
   directionsService = new google.maps.DirectionsService();
   
   var mapOptions = {

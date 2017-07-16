@@ -42,7 +42,7 @@
     <div id="map_search1" style="width:50%; height:35%;float:left;">
       <form id="f0" style="display:none;">
         <CENTER>
-          <label><br><br>ただいまルートを初期化しています。<br>
+          <label><br><br><br>ただいまルートを初期化しています。<br>
           しばらくお待ちください。</label>
         </CENTER>
       </form>
@@ -77,7 +77,6 @@
     
     <script>
       function reset_search(){
-        document.getElementById("clear_route").disabled = false;
         set_form(3);
         init_map();
         reset_color();
