@@ -8,6 +8,10 @@
       html { height: 100% }
       body { height: 100%; margin: 0; padding: 0 }
       #map_canvas { height: 100% }
+      #goal1{ display:block; width:70% }
+      #goal2{ display:block; width:70% }
+      #goal3{ display:block; width:70% }
+
     </style>
     
     <script type="text/javascript" src="create_Address.js"></script>
@@ -19,7 +23,7 @@
   </head>
 
   <!-- ページが読み込まれたらinitialize()関数を実行 -->
-  <body onload="initialize()">
+  <body onload="initialize(),reset_color(),set_form(1),set_move(1),init(),reset_form()">
   
     <div id="area_name" style="width:100%; height:10%;"></div>
     <!-- 地図を表示させる要素。widthとheightを必ず指定する。 -->
@@ -28,28 +32,92 @@
     <!--div id="map_search1" style="width:38%; height:60%; float:left;"-->
     <div id="space" style="width:50%; height:5%;">
       <form>
-        <input type="radio" name="検索" value="選択検索" onclick="set_form(1)" checked>選択検索
-        <input type="radio" name="検索" value="詳細検索" onclick="set_form(2)" >詳細検索<br>
+        <input type="radio" id="select_s1" name="検索" value="選択検索" onclick="set_form(1)" checked>選択検索
+        <input type="radio" id="select_s2" name="検索" value="詳細検索" onclick="set_form(2)" >詳細検索<br>
+        <input type="radio" id="select_m1" name="交通" value="徒歩" onclick="set_move(1)" checked>徒歩
+        <input type="radio" id="select_m2" name="交通" value="車" onclick="set_move(2)" >車　
+        <input type="button" value="ルート検索を取り消す" onclick="reset_search()"><br>
       </form>
     </div>
-    <div id="map_search1" style="width:50%; height:39%;float:left;">
-      <form id="f1" style="display:none;">
+    <div id="map_search1" style="width:50%; height:35%;float:left;">
+      <form id="f1" style="overflow: scroll;">
+        <br>
+        <br>
+        <CENTER>
+          クリックして行き先を選択してください
+          <label id="goal1" onclick="search_route_to_goal('〒651-0082 兵庫県神戸市中央区小野浜町1-4'),change_color(this)" style="border:solid 1px green; background:#32CD32">
+            「 Kiito 」へ行く
+          </label>
+          <label id="goal2" onclick="search_route_to_goal('〒657-8501 神戸市灘区六甲台町1-1'),change_color(this)" style="border:solid 1px green; background:#32CD32">
+           「 神戸大学システム情報学研究科 」へ行く
+          </label>
+          <label id="goal3" onclick="search_route_to_goal('〒650-0001 兵庫県神戸市中央区加納町６−５−１'),change_color(this)" style="border:solid 1px green; background:#32CD32">
+           「 神戸市役所 」へ行く
+          </label>
+        </CENTER>
+      </form>
+      <form id="f2" style="display:none;">
+        <br>
         <br>
         目的地:　<input type="text" value="" id="end_address">　へ<br><br>
         経由地:　<input type="text" value="" id="via_address">　　<br>
-        <label id="text1">(経由地は空白でもOK!)</label>
+        <label id="text1">(経由地は空白でもOK!)</label><br>
         <br>
-        <input type="button" value="検索" onclick="search_route()">
+        　　　<input type="button" value="検索" onclick="search_route()">
+        　　<input type="button" value="検索クリア" onclick="reset_form()">
       </form>
     </div>
-    <div id="route" style="width:50%; height:40%; overflow: scroll; float:right; background:#f8f8f8;"></div>
+    <div id="route" style="width:50%; height:35%; overflow: scroll; float:right; background:#f8f8f8;"></div>
     
     <script>
+      function reset_search(){
+        init_map();
+        reset_color();
+        reset_form();
+      }
+      
       function set_form(radio_num){
         if (radio_num==2){
-          document.getElementById("f1").style.display = "block";
-        } else {
           document.getElementById("f1").style.display = "none";
+          document.getElementById("f2").style.display = "block";
+        } else {
+          document.getElementById("f2").style.display = "none";
+          document.getElementById("f1").style.display = "block";
+        }
+      }
+      
+      function init(){
+        document.getElementById("select_s1").checked = true;
+        document.getElementById("select_s2").checked = false;
+        document.getElementById("select_m1").checked = true;
+        document.getElementById("select_m2").checked = false;
+      }
+      
+      function reset_form(){
+        document.getElementById("end_address").value = "";
+        document.getElementById("via_address").value = "";
+      }
+      
+      function search_route_to_goal(address){
+        document.getElementById("end_address").value=address;
+        document.getElementById("via_address").value="";
+        search_route();
+      }
+      
+      function change_color(element){
+        reset_color();
+        element.style.background = "#FFFF00"; 
+      }
+      
+      function reset_color(){
+        var goal_name;
+        for (var i=1 ; i<=100 ; i++){ 
+          goal_name = "goal" + String(i);
+          try{
+            document.getElementById(goal_name).style.background = "#32CD32"; 
+          }catch(e){
+            break;
+          }
         }
       }
     </script>

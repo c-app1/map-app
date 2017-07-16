@@ -14,6 +14,13 @@ var marker;
 //フラグ
 var initialize_map_flag = false;
 
+//フラグ
+var initialize_route_flag = false;
+
+//車(2)か徒歩(1)か
+var drive_or_walk_flag = 1;
+
+
 /*var directionsErr = new Array(); //ルート結果のエラーメッセージ 
 directionsErr[ds.INVALID_REQUEST] = "指定された DirectionsRequest が無効です。"; 
 directionsErr[ds.MAX_WAYPOINTS_EXCEEDED] = "DirectionsRequest に指定された DirectionsWaypoint が多すぎます。ウェイポイントの最大許容数は 8 に出発地点と到着地点を加えた数です。"; 
@@ -184,25 +191,39 @@ function search_route(){
   
   var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions); // ルート案内
   directionsDisplay.setMap(map1);
+  if (initialize_route_flag == true){
+    document.getElementById("route").removeChild(document.getElementById("route").childNodes[0]);
+  }else{
+    initialize_route_flag = true;
+  }
   directionsDisplay.setPanel(document.getElementById("route"));
-  google.maps.event.addListener(directionsDisplay,'directions_changed', function(){});//引っ張ってルート変更できるように設定?
+  google.maps.event.addListener(directionsDisplay,'directions_changed', function(){});
   
   //var start = "梅田駅";
   //var end = "天王寺駅";
+  
+  var travel_mode;
+  
+  if (drive_or_walk_flag == 1){
+    travel_mode = google.maps.DirectionsTravelMode.WALKING;
+  }else{
+    travel_mode = google.maps.DirectionsTravelMode.DRIVING;
+  }
+  //console.log(travel_mode);
   var end = document.getElementById("end_address").value;
-  waypoint1 = document.getElementById("via_address").value;
+  var waypoint1 = document.getElementById("via_address").value;
   if (waypoint1 !=""){
     var request = {
       origin:myLatlng, // 出発地
       destination:end, // 目的地
       waypoints:[{location:waypoint1}], //途中経路
-      travelMode: google.maps.DirectionsTravelMode.DRIVING // 車で
+      travelMode: travel_mode //移動手段
     };
   }else{
     var request = {
       origin:myLatlng, // 出発地
       destination:end, // 目的地
-      travelMode: google.maps.DirectionsTravelMode.DRIVING // 車で
+      travelMode: travel_mode //移動手段
     };
   }
   directionsService.route(request, function(results, status) {
@@ -247,5 +268,14 @@ function get_area_name_a(address){
   return latlng;
 }
 
+function set_move(move_num){
+  drive_or_walk_flag = move_num;
+}
 
+function init_map(){
+  initialize_map_flag = false;
+  initialize_route_flag = false;
+  document.getElementById("route").removeChild(document.getElementById("route").childNodes[0]);
+  initialize();
+}
 
