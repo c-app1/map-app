@@ -95,7 +95,7 @@ function get_area_name(latLng_now){
     if(status == google.maps.GeocoderStatus.OK){
       document.getElementById("area_name").innerHTML = results[0].formatted_address+'付近にいます';
     } else {
-      //alert("エラー")
+      alert("エラー")
     }
   });
 }
