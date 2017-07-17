@@ -25,15 +25,12 @@
   <!-- ページが読み込まれたらinitialize()関数を実行 -->
   <body onload="initialize(),reset_color(),set_form(1),set_move(1),init(),reset_form()">
   
-    <div id="area_name" style="width:90%; height:10%;float:left"></div>
-    <div id="compass_area" style="width:10%;height:10%;float:left">
-      <canvas id="compass_canvas"></canvas>
-    </div>
+    <div id="area_name" style="width:100%; height:7%;"></div>
     <!-- 地図を表示させる要素。widthとheightを必ず指定する。 -->
     <div id="map_canvas" style="width:100%; height:50%;"></div>
     <!--div id="space" style="width:2%; height:60%; float:left;"></div-->
     <!--div id="map_search1" style="width:38%; height:60%; float:left;"-->
-    <div id="space" style="width:50%; height:10%;float:left;">
+    <div id="space" style="width:50%; height:5%;float:left;">
       <form>
         <input type="radio" id="select_s1" name="検索" value="選択検索" onclick="set_form(1)" checked>選択検索
         <input type="radio" id="select_s2" name="検索" value="詳細検索" onclick="set_form(2)" >詳細検索<br>
@@ -42,7 +39,7 @@
         <input type="button" id="clear_route" value="ルート検索を取り消す" onclick="reset_search()" disabled><br>
       </form>
     </div>
-    <div id="space2" style="width:50%; height:10%;float:right;">
+    <div id="space2" style="width:50%; height:5%;float:right;">
       <form>
         うりぼーモード:
         <input type="radio" id="select_u1" name="うりぼー" value="ON" onclick="set_on_off('on')" checked>ON
@@ -51,6 +48,7 @@
     </div>
     <div id="map_search1" style="width:50%; height:30%;float:left;">
       <form id="f1" style="overflow: scroll;">
+        <br>
         <br>
         <CENTER>
           クリックして行き先を選択してください
@@ -67,6 +65,7 @@
       </form>
       <form id="f2" style="display:none;">
         <br>
+        <br>
         出発地:　<input type="text" value="" id="start_address"><br>
         (空白の場合は現在地が出発地になります)<br>
         <font color="red">目的地:　</font><input type="text" value="" id="end_address">　へ<br>
@@ -77,6 +76,11 @@
       </form>
     </div>
     <div id="route" style="width:50%; height:30%; overflow: scroll; float:right; background:#f8f8f8;"></div>
+    <div id="link" style="width:50%; height:8%; overflow: scroll;">
+      素材提供サイト一覧<br>
+      <A href="http://wanpagu.undo.jp/" target="_blank">フリー素材 今日もわんパグ</A><br>
+      <A href="http://icon-rainbow.com/" target="_blank">Icon-rainbow</A>
+    </div>
     
     <script>
       function reset_search(){
