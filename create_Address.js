@@ -84,6 +84,7 @@ function successCallback(pos) {
   var Potition_latitude = pos.coords.latitude;
   var Potition_longitude = pos.coords.longitude;
   var angle = pos.coords.heading;
+  alert(angle);
   
   // 位置情報が取得出来たらGoogle Mapを表示する
   start(Potition_latitude,Potition_longitude,angle);
