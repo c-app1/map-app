@@ -64,16 +64,15 @@ function initialize() {
   var compass = "./compass.png";
   
   compass_image = new Image();
-  image.onload = function() {
-    compass_canvas.width = compass_image.width*0.2;
-    compass_canvas.height = compass_image.height*0.2;
-  };
+  image.onload = function() {};
   compass_image.src = compass;
+  update_compass(20);
+  
   
   // 現在の位置情報取得を実施 正常に位置情報が取得できると、
   // successCallbackがコールバックされる。
   //navigator.geolocation.getCurrentPosition(successCallback,errorCallback);
-  navigator.geolocation.getCurrentPosition(successCallback,errorCallback);
+  navigator.geolocation.watchPosition(successCallback,errorCallback);
   } else {
     alert("ごめんなさい。本ブラウザではGeolocationが使えません")
   }
@@ -84,8 +83,6 @@ function successCallback(pos) {
   var Potition_latitude = pos.coords.latitude;
   var Potition_longitude = pos.coords.longitude;
   var angle = pos.coords.heading;
-  alert(angle);
-  
   // 位置情報が取得出来たらGoogle Mapを表示する
   start(Potition_latitude,Potition_longitude,angle);
 }
@@ -97,8 +94,9 @@ function errorCallback(error) {
 function start(x,y,angle){
   
   myLatlng = new google.maps.LatLng(x,y);
-  update_compass(angle);
-  
+  if(angle){
+    update_compass(angle);
+  }
   if (marker){// マーカーがすでにあるなら消去
     marker.setMap(null);
   }else{ //もし、初期化で呼び出されたならば
@@ -142,11 +140,12 @@ function get_area_name(latLng_now){
 
 
 function update_compass(angle) {
-  var theta = angle;
+  var theta = angle / 180 * Math.PI;
   ctx.clearRect(0, 0, compass_canvas.width, compass_canvas.height);
   ctx.save();
+  ctx.translate(compass_canvas.width / 2, compass_canvas.height / 2);
   ctx.rotate(theta);
-  ctx.drawImage(compass_image, 0, 0, compass_image.width, compass_image.height, 0, 0, compass_image.width*0.2, compass_image.height*0.2);
+  ctx.drawImage(compass_image, -compass_image.width/2, -compass_image.height/2);
   ctx.restore();
 }
 
