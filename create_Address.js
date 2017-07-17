@@ -73,7 +73,7 @@ function initialize() {
   // 現在の位置情報取得を実施 正常に位置情報が取得できると、
   // successCallbackがコールバックされる。
   //navigator.geolocation.getCurrentPosition(successCallback,errorCallback);
-  navigator.geolocation.watchPosition(successCallback,errorCallback);
+  navigator.geolocation.getCurrentPosition(successCallback,errorCallback);
   } else {
     alert("ごめんなさい。本ブラウザではGeolocationが使えません")
   }
