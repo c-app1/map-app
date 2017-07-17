@@ -65,8 +65,8 @@ function initialize() {
   
   compass_image = new Image();
   image.onload = function() {
-    compass_canvas.width = compass_image.width;
-    compass_canvas.height = compass_image.height;
+    compass_canvas.width = compass_image.width*0.2;
+    compass_canvas.height = compass_image.height*0.2;
   };
   compass_image.src = compass;
   
