@@ -5,7 +5,6 @@ var myLatlng;
 //描画するマップ
 var map1;
 
-
 var directions;
 
 //現在地のマーカー
@@ -17,6 +16,25 @@ var initialize_route_flag = false;
 //車(2)か徒歩(1)か
 var drive_or_walk_flag = 1;
 
+//うりぼーモードON,OFF
+var uribo_flag = true;
+
+//うりぼー画像の情報
+var image;
+
+//作成するマーカーのリスト
+var marker_list = [];
+
+//カウンター
+counter = 0;
+
+//イメージアイコン
+var image_icon = ["marker_blue.png","marker_green.png","marker_purple.png"];
+
+//コンパス用
+var compass_canvas;
+var ctx;
+var compass_image;
 
 /*var directionsErr = new Array(); //ルート結果のエラーメッセージ 
 directionsErr[ds.INVALID_REQUEST] = "指定された DirectionsRequest が無効です。"; 
@@ -31,13 +49,26 @@ directionsErr[ds.ZERO_RESULTS] = "出発地点と到着地点間でルートを�
 <!-- initialize()関数を定義 -->
 function initialize() {
   if (navigator.geolocation) {
-  
+  set_on_off('on');
   // 位置情報取得のオプション。高精度にする
   var position_options = {
     enableHightAccuracy: true,
     timeout:10000, //タイムアウトは10秒
     maximumAge:0 //キャッシュは使用禁止
   };
+  
+  //コンパスの処理
+  compass_canvas = document.getElementById("compass_canvas");
+  ctx = compass_canvas.getContext("2d");
+  //コンパスの画像
+  var compass = "./compass.png";
+  
+  compass_image = new Image();
+  image.onload = function() {
+    compass_canvas.width = compass_image.width;
+    compass_canvas.height = compass_image.height;
+  };
+  compass_image.src = compass;
   
   // 現在の位置情報取得を実施 正常に位置情報が取得できると、
   // successCallbackがコールバックされる。
@@ -52,18 +83,20 @@ function initialize() {
 function successCallback(pos) {
   var Potition_latitude = pos.coords.latitude;
   var Potition_longitude = pos.coords.longitude;
+  var angle = pos.coords.heading;
   
   // 位置情報が取得出来たらGoogle Mapを表示する
-  start(Potition_latitude,Potition_longitude);
+  start(Potition_latitude,Potition_longitude,angle);
 }
  
 function errorCallback(error) {
   alert("位置情報が許可されていません。位置情報をオンにしてください。");
 }
 
-function start(x,y){
+function start(x,y,angle){
   
   myLatlng = new google.maps.LatLng(x,y);
+  update_compass(angle);
   
   if (marker){// マーカーがすでにあるなら消去
     marker.setMap(null);
@@ -80,10 +113,14 @@ function start(x,y){
     map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
   }
   
+  
   marker = new google.maps.Marker({
-  position: myLatlng,
-  //map: map1,
-  title:"現在地"
+    position: myLatlng,
+    //map: map1,
+    title: "現在地",
+    icon: image,
+    optimized: !uribo_flag,//うりぼーフラグがtrueならfalseに設定,これでgifが動く
+    zIndex: 5
   });
   marker.setMap(map1);
   map1.setCenter( myLatlng );
@@ -103,35 +140,18 @@ function get_area_name(latLng_now){
 }
 
 
-/*function s() {
-  myLatlng = new google.maps.LatLng(34.68639,135.52);
-  
-  var mapOptions = {
-      center: myLatlng,
-      zoom: 12,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-      //position: google.maps.ControlPosition.TOP_CENTER
-  };
-
-  // Mapオブジェクトに地図表示要素情報とオプション情報を渡し、インスタンス生成
-  map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-  
-  var marker = new google.maps.Marker({
-  position: myLatlng,
-  map: map1,
-  title:"東京"
-  });
-  
-}*/
-
-
-/*function initialize(){
-  s();
-  search_route();
-}*/
+function update_compass(angle) {
+  var theta = angle;
+  ctx.clearRect(0, 0, compass_canvas.width, compass_canvas.height);
+  ctx.save();
+  ctx.rotate(theta);
+  ctx.drawImage(compass_image, 0, 0, compass_image.width, compass_image.height, 0, 0, compass_image.width*0.2, compass_image.height*0.2);
+  ctx.restore();
+}
 
 
 function search_route(){
+  counter = 0;
   document.getElementById("clear_route").disabled = false;
   directionsService = new google.maps.DirectionsService();
   
@@ -147,7 +167,10 @@ function search_route(){
   marker = new google.maps.Marker({
   position: myLatlng,
   map: map1,
-  title:"現在地"
+  title:"現在地",
+  zIndex: 5,
+  icon: image,
+  optimized: !uribo_flag,//うりぼーフラグがtrueならfalseに設定,これでgifが動く
   });
   get_area_name(myLatlng);
   
@@ -189,6 +212,7 @@ function search_route(){
   directionsDisplay.setMap(map1);
   if (initialize_route_flag == true){
     document.getElementById("route").removeChild(document.getElementById("route").childNodes[0]);
+    initialize_route_flag == false;
   }else{
     initialize_route_flag = true;
   }
@@ -209,8 +233,13 @@ function search_route(){
   var start_point = document.getElementById("start_address").value;
   if (start_point == ""){
     start_point = myLatlng;
+    create_maker("出発地", myLatlng, make_maker);
+  }else{
+    set_Center(start_point);
+    create_maker(start_point, null, make_maker);
   }
   var end = document.getElementById("end_address").value;
+  create_maker(end, null, make_maker);
   var waypoint1 = document.getElementById("via_address").value;
   if (waypoint1 !=""){
     var request = {
@@ -219,6 +248,7 @@ function search_route(){
       waypoints:[{location:waypoint1}], //途中経路
       travelMode: travel_mode //移動手段
     };
+    create_maker(waypoint1, null,make_maker);
   }else{
     var request = {
       origin:start_point, // 出発地
@@ -228,46 +258,80 @@ function search_route(){
   }
   directionsService.route(request, function(results, status) {
     if (status == ds.OK) {
+      while(1){//マーカーを描画
+        m = marker_list.pop();
+        if (m != undefined){
+          m.setMap(map1);
+        }else{
+          break;
+        }
+      }
       directionsDisplay.setDirections(results); // 描画
-      // ポリライン(折れ線)を生成し、マップに表示 
-      /*var poly = new google.maps.Polyline({
-      map: map1,              //マップ 
-      path: results.routes[0].overview_path,//ポリラインの座標の列 
-      strokeWeight: 5,       //ストローク幅(ピクセル単位) 
-      strokeColor: "#f01010",//16進数形式のストロークの色 
-      strokeOpacity: 0.5     //ストロークの不透明度(0.0～1.0) 
-      }); 
-      // 検索結果の中心設定 
-      map1.setCenter(results.routes[0].bounds.getCenter());*/
     }else{
       alert("ルート検索が失敗しました。" + directionsErr[status]);
-      initialize_route_flag = false;
+      //initialize_route_flag = false;
+      while(1){
+        m = marker_list.pop();
+        if (m == undefined){
+          break;
+        }
+      }
     }
   });
 }
 
-function create_maker(latlng){
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//geocodeは非同期なのでコールバック処理
+function create_maker(address_data, now_latlng, callback){
+  if (now_latlng == null){
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode( { 'address': address_data, 'language': 'ja'}, function(results, status) {
+        if(status == google.maps.GeocoderStatus.OK){
+          callback(address_data, new google.maps.LatLng(results[0].geometry.location.lat(),results[0].geometry.location.lng()));
+        } else {
+          //callback("UNKNOWN", new google.maps.LatLng(results[0].geometry.location.lat(),results[0].geometry.location.lng()));
+          //create_maker(address_data, now_latlng, callback);
+          alert("マーカーの設置に失敗しました。もう一度検索しなおしてみてください。\n(どうしても上手く行かない場合、検索ワードを変えると上手く行くこともあります。)")
+        }
+      });
+  }else{
+    callback(address_data, now_latlng);
+  }
+}
+
+function make_maker(address_data, latlng){
   var point_marker = new google.maps.Marker({
-  position: latlng,
-  map: map1,
-  title:address
+    position: latlng,
+    //map: map1,
+    label: {
+      text: address_data,
+      color: "black",
+      fontSize: "12px",
+    },
+    icon: { 
+      url: image_icon[counter], 
+      scaledSize: new google.maps.Size( 40, 40 )
+    },
+    zIndex: 1
+  });
+  marker_list.push(point_marker);
+  counter = counter + 1;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function set_Center(address){
+  var geocoder = new google.maps.Geocoder();
+  geocoder.geocode( { 'address': address, 'language': 'ja'}, function(results, status) {
+    if(status == google.maps.GeocoderStatus.OK){
+      map1.setCenter(new google.maps.LatLng(results[0].geometry.location.lat(),results[0].geometry.location.lng()));
+    } else {
+      
+    }
   });
 }
 
-function get_area_name_a(address){
-  // 座標から住所名を取得
-  var latlng;
-  var geocoder = new google.maps.Geocoder();
-  geocoder.geocode({address: address}, function(results, status){
-    if(status == google.maps.GeocoderStatus.OK){
-      latlng = results[0].geometry.location;
-    } else {
-      latlng = -1;
-      alert("エラー");
-    }
-  });
-  return latlng;
-}
 
 function set_move(move_num){
   drive_or_walk_flag = move_num;
@@ -291,8 +355,35 @@ function clear_map(){
   // Mapオブジェクトに地図表示要素情報とオプション情報を渡し、インスタンス生成
   map1 = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
   
+  marker = new google.maps.Marker({
+    position: myLatlng,
+    //map: map1,
+    title: "現在地",
+    icon: image,
+    optimized: !uribo_flag,//うりぼーフラグがtrueならfalseに設定,これでgifが動く
+    zIndex: 5
+  });
+  
   marker.setMap(map1);
   map1.setCenter( myLatlng );
   get_area_name(myLatlng);
 }
 
+
+function set_on_off(mode){
+  if (mode == 'on'){
+    uribo_flag = true;
+    //うりぼー画像設定
+    image = { url: "./uribo.gif", scaledSize: new google.maps.Size( 40, 40 ) };
+  }else{
+    uribo_flag = false;
+    image = { url: "./marker_red.png", scaledSize: new google.maps.Size( 40, 40 ) };
+  }
+  if(marker){
+    if (initialize_route_flag == false){
+      clear_map();
+    }else{
+      search_route();
+    }
+  }
+}
