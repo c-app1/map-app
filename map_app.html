@@ -23,9 +23,18 @@
   </head>
 
   <!-- ページが読み込まれたらinitialize()関数を実行 -->
-  <body onload="initialize(),reset_color(),set_form(1),set_move(1),init(),reset_form()">
+  <body onload="initialize(),reset_color(),set_form(1),set_move(1),init(),reset_form(),change_message_and_flag(1)">
   
-    <div id="area_name" style="width:100%; height:10%;"></div>
+    <div id="area_name" style="width:85%; height:10%;float:left;"></div>
+    <div id="message_area" style="width:15%; height:10%;float:left;">
+      <CENTER>検索状態<br></CENTER>
+      <form id="ok_message">
+        <CENTER>検索可能です。</CENTER>
+      </form>
+      <form id="not_message" style="display:none;">
+        <CENTER>お待ちください。</CENTER>
+      </form>
+    </div>
     <!-- 地図を表示させる要素。widthとheightを必ず指定する。 -->
     <div id="map_canvas" style="width:100%; height:50%;"></div>
     <!--div id="space" style="width:2%; height:60%; float:left;"></div-->
@@ -71,7 +80,7 @@
         <font color="red">目的地:　</font><input type="text" value="" id="end_address">　へ<br>
         経由地:　<input type="text" value="" id="via_address">　　<br>
         <label id="text1">(経由地は空白でもOK!)</label><br>
-        <input type="button" value="検索" onclick="search_route()">
+        <input type="button" value="検索" onclick="search()">
         　　<input type="button" value="検索クリア" onclick="reset_form()">
       </form>
     </div>
@@ -84,6 +93,9 @@
     </div>
     
     <script>
+    
+      var search_flag = false;
+    
       function reset_search(){
         init_map();
         reset_color();
@@ -119,16 +131,26 @@
         document.getElementById("via_address").value = "";
       }
       
+      function search(){
+        if (search_flag == false){
+          search_route(change_message_and_flag);/*コールバック関数としてフラグをいじる*/
+        }
+      }
+      
       function search_route_to_goal(address){
-        document.getElementById("start_address").value = "";
-        document.getElementById("end_address").value=address;
-        document.getElementById("via_address").value="";
-        search_route();
+        if (search_flag == false){
+          document.getElementById("start_address").value = "";
+          document.getElementById("end_address").value=address;
+          document.getElementById("via_address").value="";
+          search_route(change_message_and_flag);
+        }
       }
       
       function change_color(element){
-        reset_color();
-        element.style.background = "#FFFF00"; 
+        if (search_flag == false){
+          reset_color();
+          element.style.background = "#FFFF00";
+        }
       }
       
       function reset_color(){
@@ -140,6 +162,18 @@
           }catch(e){
             break;
           }
+        }
+      }
+      
+      function change_message_and_flag(message_num){
+        if (message_num == 2){
+          search_flag = true;
+          document.getElementById("ok_message").style.display = "none";
+          document.getElementById("not_message").style.display = "block";
+        }else{
+          search_flag = false;
+          document.getElementById("ok_message").style.display = "block";
+          document.getElementById("not_message").style.display = "none";
         }
       }
       

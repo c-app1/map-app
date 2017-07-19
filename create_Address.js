@@ -25,8 +25,8 @@ var image;
 //作成するマーカーのリスト
 var marker_list = [];
 
-//カウンター
-counter = 0;
+//失敗回数をカウントするカウンター
+false_counter = 0;
 
 //イメージアイコン
 var image_icon = ["marker_blue.png","marker_green.png","marker_purple.png"];
@@ -109,8 +109,8 @@ function get_area_name(latLng_now){
   });
 }
 
-function search_route(){
-  counter = 0;
+function search_route(callback){
+  callback(2);
   document.getElementById("clear_route").disabled = false;
   directionsService = new google.maps.DirectionsService();
   
@@ -155,11 +155,8 @@ function search_route(){
   
   var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions); // ルート案内
   directionsDisplay.setMap(map1);
-  if (initialize_route_flag == true){
-    initialize_route_flag == false;
+  if (document.getElementById("route").childNodes[0]){
     document.getElementById("route").removeChild(document.getElementById("route").childNodes[0]);
-  }else{
-    initialize_route_flag = true;
   }
   directionsDisplay.setPanel(document.getElementById("route"));
   google.maps.event.addListener(directionsDisplay,'directions_changed', function(){});
@@ -178,13 +175,15 @@ function search_route(){
   var start_point = document.getElementById("start_address").value;
   if (start_point == ""){
     start_point = myLatlng;
-    create_maker("出発地", myLatlng, make_maker);
+    create_maker("出発地", myLatlng, make_maker, 1);
   }else{
     set_Center(start_point);
-    create_maker(start_point, null, make_maker);
+    create_maker(start_point, null, make_maker, 1);
   }
   var end = document.getElementById("end_address").value;
-  create_maker(end, null, make_maker);
+  if (end != ""){
+    create_maker(end, null, make_maker, 2);
+  }
   var waypoint1 = document.getElementById("via_address").value;
   if (waypoint1 !=""){
     var request = {
@@ -193,7 +192,7 @@ function search_route(){
       waypoints:[{location:waypoint1}], //途中経路
       travelMode: travel_mode //移動手段
     };
-    create_maker(waypoint1, null,make_maker);
+    create_maker(waypoint1, null,make_maker, 3);
   }else{
     var request = {
       origin:start_point, // 出発地
@@ -223,29 +222,34 @@ function search_route(){
       }
     }
   });
+  callback(1);
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //geocodeは非同期なのでコールバック処理
-function create_maker(address_data, now_latlng, callback){
+function create_maker(address_data, now_latlng, callback, image_num){
   if (now_latlng == null){
       var geocoder = new google.maps.Geocoder();
       geocoder.geocode( { 'address': address_data, 'language': 'ja'}, function(results, status) {
         if(status == google.maps.GeocoderStatus.OK){
-          callback(address_data, new google.maps.LatLng(results[0].geometry.location.lat(),results[0].geometry.location.lng()));
+          callback(address_data, new google.maps.LatLng(results[0].geometry.location.lat(),results[0].geometry.location.lng()), image_num);
         } else {
-          //callback("UNKNOWN", new google.maps.LatLng(results[0].geometry.location.lat(),results[0].geometry.location.lng()));
-          //create_maker(address_data, now_latlng, callback);
-          alert("マーカーの設置に失敗しました。もう一度検索しなおしてみてください。\n(どうしても上手く行かない場合、検索ワードを変えると上手く行くこともあります。)")
+          //false_counter = false_counter + 1;
+          //if (false_counter==10){
+            alert("マーカーの作成に失敗しました。もう一度検索しなおしてみてください。\n(どうしても上手く行かない場合、検索ワードを変えると上手く行くこともあります。)")
+            //false_counter = 0;
+          //}else{
+            //create_maker(address_data, now_latlng, callback, image_num);
+          //}
         }
       });
   }else{
-    callback(address_data, now_latlng);
+    callback(address_data, now_latlng, image_num);
   }
 }
 
-function make_maker(address_data, latlng){
+function make_maker(address_data, latlng, image_num){
   var point_marker = new google.maps.Marker({
     position: latlng,
     //map: map1,
@@ -255,13 +259,12 @@ function make_maker(address_data, latlng){
       fontSize: "12px",
     },
     icon: { 
-      url: image_icon[counter], 
+      url: image_icon[image_num - 1], 
       scaledSize: new google.maps.Size( 40, 40 )
     },
     zIndex: 1
   });
   marker_list.push(point_marker);
-  counter = counter + 1;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,8 +286,10 @@ function set_move(move_num){
 }
 
 function init_map(){
-  initialize_route_flag = false;
-  document.getElementById("route").removeChild(document.getElementById("route").childNodes[0]);
+  //initialize_route_flag = false;
+  if (document.getElementById("route").childNodes[0]){
+    document.getElementById("route").removeChild(document.getElementById("route").childNodes[0]);
+  }
   clear_map();
 }
 
@@ -314,6 +319,21 @@ function clear_map(){
   get_area_name(myLatlng);
 }
 
+function marker_reset(){
+  if(marker){
+    marker.setMap(null);
+    marker = new google.maps.Marker({
+      position: myLatlng,
+      //map: map1,
+      title: "現在地",
+      icon: image,
+      optimized: !uribo_flag,//うりぼーフラグがtrueならfalseに設定,これでgifが動く
+      zIndex: 5
+    });
+    marker.setMap(map1);
+  }
+}
+
 
 function set_on_off(mode){
   if (mode == 'on'){
@@ -324,11 +344,5 @@ function set_on_off(mode){
     uribo_flag = false;
     image = { url: "./marker_red.png", scaledSize: new google.maps.Size( 40, 40 ) };
   }
-  if(marker){
-    if (initialize_route_flag == false){
-      clear_map();
-    }else{
-      search_route();
-    }
-  }
+  marker_reset();
 }
