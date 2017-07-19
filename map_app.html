@@ -25,7 +25,7 @@
   <!-- ページが読み込まれたらinitialize()関数を実行 -->
   <body onload="initialize(),reset_color(),set_form(1),set_move(1),init(),reset_form(),change_message_and_flag(1)">
   
-    <div id="area_name" style="width:70%; height:10%;float:left; overflow: scroll;"></div>
+    <div id="area_name" style="width:70%; height:10%;float:left; overflow: auto;"></div>
     <div id="message_area" style="width:30%; height:10%;float:left;">
       <CENTER>検索状態<br></CENTER>
       <form id="ok_message">
@@ -56,7 +56,7 @@
       </form>
     </div>
     <div id="map_search1" style="width:50%; height:50%;float:left;">
-      <form id="f1" style="overflow: scroll;">
+      <form id="f1" style="overflow: auto;">
         <br>
         <br>
         <CENTER>
@@ -84,9 +84,9 @@
         　　<input type="button" value="検索クリア" onclick="reset_form()">
       </form>
     </div>
-    <div id="route" style="width:50%; height:30%; overflow: scroll; float:right; background:#f8f8f8;"></div>
+    <div id="route" style="width:50%; height:30%; overflow: auto; float:right; background:#f8f8f8;"></div>
     <br>
-    <div id="link" style="width:50%; height:20%; overflow: scroll;">
+    <div id="link" style="width:50%; height:20%; overflow: auto;">
       素材提供サイト一覧<br>
       <A href="http://wanpagu.undo.jp/" target="_blank">フリー素材 今日もわんパグ</A><br>
       <A href="http://icon-rainbow.com/" target="_blank">Icon-rainbow</A>
